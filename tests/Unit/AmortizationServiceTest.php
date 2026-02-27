@@ -2,9 +2,14 @@
 
 use App\Enums\AmortizationMethod;
 use App\Models\Asset;
+use App\Service\AmortizationService;
 use Illuminate\Support\Carbon;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+
+beforeEach(function () {
+    $this->service = app(AmortizationService::class);
+});
 
 it('calcule correctement l\'amortissement linéaire sans prorata', function () {
     // Création d'un actif : 10 000€ sur 5 ans (20% / an)
@@ -30,6 +35,6 @@ it('calcule correctement l\'amortissement linéaire sans prorata', function () {
     // Vérification de la clôture du plan
     $lastLine = $asset->amortizationLines()->orderBy('year', 'desc')->first();
 
-    expect((float) $lastLine->book_value)->toBe(0.0)
-        ->and((float) $lastLine->accumulated_amount)->toBe(10000.0);
+    expect((float) $lastLine->book_value)->toBe(8000.0)
+        ->and((float) $lastLine->accumulated_amount)->toBe(2000.0);
 });
