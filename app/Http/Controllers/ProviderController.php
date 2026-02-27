@@ -17,4 +17,9 @@ class ProviderController extends Controller
     {
         return response()->json(Provider::create($request->validated()), 201);
     }
+
+    public function show(Provider $provider): JsonResponse
+    {
+        return response()->json($provider->load('assets'));
+    }
 }
