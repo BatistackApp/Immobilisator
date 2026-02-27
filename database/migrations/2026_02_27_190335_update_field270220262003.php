@@ -10,12 +10,20 @@ return new class extends Migration {
         Schema::table('asset_categories', function (Blueprint $table) {
             $table->integer('default_useful_life')->default(0);
         });
+
+        Schema::table('assets', function (Blueprint $table) {
+            $table->foreignIdFor(\App\Models\Provider::class)->constrained();
+        });
     }
 
     public function down(): void
     {
-        Schema::table('', function (Blueprint $table) {
+        Schema::table('asset_categories', function (Blueprint $table) {
             $table->dropColumn('default_useful_life');
+        });
+
+        Schema::table('assets', function (Blueprint $table) {
+            $table->dropColumn('provider_id');
         });
     }
 };

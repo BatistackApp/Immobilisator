@@ -77,7 +77,7 @@ class AssetsTable
                     ->label('Céder')
                     ->icon('heroicon-o-archive-box-x-mark')
                     ->color('danger')
-                    ->visible(fn (Asset $record) => $record->status !== AssetStatus::DISPOSED)
+                    ->visible(fn (Asset $record) => $record->status !== AssetStatus::Disposed)
                     ->form([
                         DatePicker::make('disposal_date')
                             ->label('Date de Cession')

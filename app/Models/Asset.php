@@ -36,17 +36,8 @@ class Asset extends Model
         'status',
         'metadata',
         'depreciable_basis',
+        'provider_id',
     ];
-
-    public function assetCategory(): BelongsTo
-    {
-        return $this->belongsTo(AssetCategory::class);
-    }
-
-    public function location(): BelongsTo
-    {
-        return $this->belongsTo(Location::class);
-    }
 
     protected function casts(): array
     {
@@ -65,7 +56,7 @@ class Asset extends Model
         return $this->belongsTo(AssetCategory::class, 'asset_category_id');
     }
 
-    public function localisation(): BelongsTo
+    public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class, 'location_id');
     }
