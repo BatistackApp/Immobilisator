@@ -37,9 +37,13 @@ class LeasingExpiryNotification extends Notification implements ShouldQueue
         return [
             'leasing_id' => $this->leasing->id,
             'contract_number' => $this->leasing->contract_number,
+            'asset_id' => $this->leasing->asset_id,
             'asset_reference' => $this->leasing->asset->reference,
+            'asset_designation' => $this->leasing->asset->designation,
             'expiry_date' => $this->leasing->end_date->toDateString(),
+            'purchase_option' => $this->leasing->purchase_option_price,
             'message' => 'Fin de contrat de leasing proche',
+            'type' => 'leasing_expiry',
         ];
     }
 }

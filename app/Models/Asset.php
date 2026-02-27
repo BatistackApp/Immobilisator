@@ -35,6 +35,7 @@ class Asset extends Model
         'amortization_method',
         'status',
         'metadata',
+        'depreciable_basis',
     ];
 
     public function assetCategory(): BelongsTo

@@ -37,6 +37,8 @@ class AppServiceProvider extends ServiceProvider
             // Vérification hebdomadaire des leasings arrivant à échéance (sous 30 jours)
             $schedule->command(CheckLeasingExpiryCommand::class)->weeklyOn(1, '09:00');
 
+            $schedule->command('app:check-maintenance')->daily();
+
             // Nettoyage automatique des modèles "soft deleted" depuis plus de 30 jours
             $schedule->command('model:prune')->daily();
         });
