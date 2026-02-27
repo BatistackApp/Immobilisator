@@ -12,6 +12,7 @@ class InterventionController extends Controller
     public function store(StoreInterventionRequest $request): JsonResponse
     {
         $intervention = Intervention::create($request->validated());
+
         return response()->json($intervention, 201);
     }
 

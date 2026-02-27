@@ -25,6 +25,7 @@ class AssetController extends Controller
     public function store(StoreAssetRequest $request): JsonResponse
     {
         $asset = Asset::create($request->validated());
+
         return response()->json($asset, 201);
     }
 
@@ -36,6 +37,7 @@ class AssetController extends Controller
     public function update(StoreAssetRequest $request, Asset $asset): JsonResponse
     {
         $asset->update($request->validated());
+
         return response()->json($asset);
     }
 
@@ -45,6 +47,7 @@ class AssetController extends Controller
             return response()->json(['message' => 'Impossible de supprimer un actif comptabilisé.'], 403);
         }
         $asset->delete();
+
         return response()->json(null, 204);
     }
 
@@ -54,6 +57,7 @@ class AssetController extends Controller
     public function recalculate(Asset $asset): JsonResponse
     {
         $this->amortizationService->generateSchedule($asset);
+
         return response()->json(['message' => 'Plan d\'amortissement mis à jour.', 'lines' => $asset->amortizationLines]);
     }
 

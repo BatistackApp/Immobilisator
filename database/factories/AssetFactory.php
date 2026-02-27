@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\AmortizationMethod;
+use App\Enums\AssetStatus;
+use App\Enums\FundingType;
 use App\Models\Asset;
 use App\Models\AssetCategory;
 use App\Models\Location;
@@ -15,9 +18,9 @@ class AssetFactory extends Factory
     public function definition(): array
     {
         return [
-            'reference' => $this->faker->word(),
+            'reference' => 'IMM-PEST-'.$this->faker->numerify('####'),
             'designation' => $this->faker->word(),
-            'funding_type' => $this->faker->word(),
+            'funding_type' => $this->faker->randomElement(FundingType::cases()),
             'acquisition_value' => $this->faker->randomFloat(),
             'salvage_value' => $this->faker->randomFloat(),
             'acquisition_date' => Carbon::now(),
@@ -25,8 +28,9 @@ class AssetFactory extends Factory
             'useful_life' => $this->faker->randomNumber(),
             'gross_value_opening' => $this->faker->randomFloat(),
             'accumulated_depreciation_opening' => $this->faker->randomFloat(),
-            'amortization_method' => $this->faker->word(),
-            'status' => $this->faker->word(),
+            'depreciable_basis' => $this->faker->randomFloat(),
+            'amortization_method' => $this->faker->randomElement(AmortizationMethod::cases()),
+            'status' => $this->faker->randomElement(AssetStatus::cases()),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
 

@@ -25,6 +25,7 @@ class CheckMaintenanceCommand extends Command
 
         if ($assets->isEmpty()) {
             $this->info("Aucune maintenance à prévoir pour l'instant.");
+
             return;
         }
 

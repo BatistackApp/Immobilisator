@@ -8,6 +8,7 @@ use App\Service\AmortizationService;
 class AssetObserver
 {
     public function __construct(protected AmortizationService $service) {}
+
     public function created(Asset $asset): void
     {
         // On génère automatiquement le tableau d'amortissement à la création

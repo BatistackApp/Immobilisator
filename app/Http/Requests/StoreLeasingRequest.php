@@ -26,14 +26,14 @@ class StoreLeasingRequest extends FormRequest
             'asset_id' => [
                 'required',
                 'exists:assets,id',
-                Rule::unique('leasings')->ignore($this->route('leasing'))
+                Rule::unique('leasings')->ignore($this->route('leasing')),
             ],
             'provider_id' => ['required', 'exists:providers,id'],
             'contract_number' => [
                 'required',
                 'string',
                 'max:100',
-                Rule::unique('leasings')->ignore($this->route('leasing'))
+                Rule::unique('leasings')->ignore($this->route('leasing')),
             ],
             'monthly_rent' => ['required', 'numeric', 'min:0'],
             'purchase_option_price' => ['required', 'numeric', 'min:0'],
@@ -46,8 +46,8 @@ class StoreLeasingRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'asset_id.unique' => "Cet actif est déjà lié à un contrat de crédit-bail actif.",
-            'contract_number.unique' => "Ce numéro de contrat de leasing existe déjà.",
+            'asset_id.unique' => 'Cet actif est déjà lié à un contrat de crédit-bail actif.',
+            'contract_number.unique' => 'Ce numéro de contrat de leasing existe déjà.',
         ];
     }
 }

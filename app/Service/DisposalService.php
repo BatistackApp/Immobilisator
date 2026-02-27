@@ -64,7 +64,7 @@ class DisposalService
                     'disposal_date' => $disposalDate->toDateString(),
                     'selling_price' => $sellingPrice,
                     'gain_loss' => $gainLoss,
-                ])
+                ]),
             ]);
 
             return [

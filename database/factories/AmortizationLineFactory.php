@@ -14,7 +14,7 @@ class AmortizationLineFactory extends Factory
     public function definition(): array
     {
         return [
-            'year' => $this->faker->randomNumber(),
+            'year' => $this->faker->year,
             'base_value' => $this->faker->randomFloat(),
             'annuity_amount' => $this->faker->randomFloat(),
             'accumulated_amount' => $this->faker->randomFloat(),

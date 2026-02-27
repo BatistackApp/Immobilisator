@@ -6,9 +6,6 @@ use App\Http\Controllers\InterventionController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\ReportController;
-use App\Http\Requests\StoreInterventionRequest;
-use App\Models\Intervention;
-use App\Service\AccountingIntegrationService;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1/fixed-assets')->group(function () {
