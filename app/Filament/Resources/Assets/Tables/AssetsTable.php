@@ -12,6 +12,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -57,6 +58,7 @@ class AssetsTable
                     ->relationship('category', 'name'),
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
                 // ACTION : RECALCULER LE PLAN
                 Action::make('recalculate')

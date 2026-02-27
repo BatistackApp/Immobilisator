@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('duration_months');
             $table->date('first_installment_date');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

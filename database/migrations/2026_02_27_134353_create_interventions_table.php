@@ -21,6 +21,7 @@ return new class extends Migration
             $table->dateTime('intervention_date');
             $table->boolean('is_capitalized')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

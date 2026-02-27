@@ -21,6 +21,7 @@ return new class extends Migration
             $table->date('end_date');
             $table->boolean('option_exercised');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
