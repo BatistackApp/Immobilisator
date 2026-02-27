@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->string('funding_type');
             $table->decimal('acquisition_value', 15, 2);
             $table->decimal('salvage_value', 15, 2)->default(0);
+            $table->decimal('depreciable_basis', 15, 2)->comment('Base amortissable (Valeur brute - Valeur résiduelle)');
+
             $table->date('acquisition_date');
             $table->date('service_date');
             $table->integer('useful_life');
