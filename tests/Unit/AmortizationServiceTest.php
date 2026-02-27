@@ -9,6 +9,7 @@ uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
 beforeEach(function () {
     $this->service = app(AmortizationService::class);
+    $this->provider = \App\Models\Provider::factory()->create();
 });
 
 it('calcule correctement l\'amortissement linéaire sans prorata', function () {
@@ -19,6 +20,7 @@ it('calcule correctement l\'amortissement linéaire sans prorata', function () {
         'useful_life' => 5,
         'service_date' => Carbon::parse('2025-01-01'),
         'amortization_method' => AmortizationMethod::Linear,
+        'provider_id' => $this->provider->id,
     ]);
 
     $this->service->generateSchedule($asset);

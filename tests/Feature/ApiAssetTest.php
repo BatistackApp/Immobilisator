@@ -10,6 +10,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->service = app(AmortizationService::class);
+    $this->provider = \App\Models\Provider::factory()->create();
 });
 
 it('permet à un utilisateur authentifié de créer une immobilisation', function () {
@@ -28,6 +29,7 @@ it('permet à un utilisateur authentifié de créer une immobilisation', functio
         'useful_life' => 3,
         'amortization_method' => 'linear',
         'status' => 'active',
+        'provider_id' => $this->provider->id,
     ];
 
     $this->actingAs($user)

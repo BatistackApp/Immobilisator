@@ -8,6 +8,7 @@ use App\Enums\FundingType;
 use App\Models\Asset;
 use App\Models\AssetCategory;
 use App\Models\Location;
+use App\Models\Provider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
@@ -36,6 +37,7 @@ class AssetFactory extends Factory
 
             'asset_category_id' => AssetCategory::factory(),
             'location_id' => Location::factory(),
+            'provider_id' => Provider::factory(),
         ];
     }
 }
