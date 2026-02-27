@@ -85,4 +85,9 @@ class Asset extends Model
     {
         return $this->hasMany(AmortizationLine::class)->orderBy('year');
     }
+
+    public function latestAmortizationLine(): HasOne
+    {
+        return $this->hasOne(AmortizationLine::class)->latestOfMany();
+    }
 }

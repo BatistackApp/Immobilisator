@@ -9,6 +9,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 
 class FiscalReporting extends Page implements HasTable
@@ -28,7 +29,11 @@ class FiscalReporting extends Page implements HasTable
         $currentYear = Carbon::now()->year;
 
         return $table
-            ->query(Asset::query())
+            ->query(Asset::query()
+                ->withSum(['interventions as augmentations' => function (Builder $query) use ($currentYear) {
+                    $query->where('is_capitalized', true)
+                        ->whereYear('intervention_date', $currentYear);
+                }], 'cost'))
             ->columns([
                 TextColumn::make('reference')
                     ->label('Référence')
@@ -38,7 +43,7 @@ class FiscalReporting extends Page implements HasTable
                     ->money('EUR'),
                 TextColumn::make('augmentations')
                     ->label('Augmentations')
-                    ->state(fn (Asset $record) => $record->interventions()->where('is_capitalized', true)->whereYear('intervention_date', $currentYear)->sum('cost'))
+                    ->state(fn (Asset $record) => $record->augmentations ?? 0)
                     ->money('EUR')
                     ->color('success'),
                 TextColumn::make('diminutions')
@@ -48,7 +53,7 @@ class FiscalReporting extends Page implements HasTable
                     ->color('danger'),
                 TextColumn::make('valeur_cloture')
                     ->label('Valeur Clôture')
-                    ->state(fn (Asset $record) => $record->gross_value_opening + $record->interventions()->where('is_capitalized', true)->sum('cost'))
+                    ->state(fn (Asset $record) => $record->gross_value_opening + ($record->augmentations ?? 0))
                     ->money('EUR')
                     ->weight('bold'),
             ])

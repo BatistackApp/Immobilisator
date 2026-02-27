@@ -18,22 +18,18 @@ class CreateProvider extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        try {
-            if (isset($data['email'])) {
-                $tempPassword = Str::random(10);
-                $user = app(CreateNewUser::class)->create([
-                    'name' => $data['name'],
-                    'email' => $data['email'],
-                    'password' => $tempPassword,
-                    'password_confirmation' => $tempPassword,
-                ]);
-            }
-
-            $data['user_id'] = $user->id ?? null;
-
-            return self::getModel()::create($data);
-        } catch (\Exception $exception) {
-            return throw new Exception($exception->getMessage());
+        if (isset($data['email'])) {
+            $tempPassword = Str::random(10);
+            $user = app(CreateNewUser::class)->create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => $tempPassword,
+                'password_confirmation' => $tempPassword,
+            ]);
         }
+
+        $data['user_id'] = $user->id ?? null;
+
+        return self::getModel()::create($data);
     }
 }
