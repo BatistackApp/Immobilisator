@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\Assets\Pages;
 
+use App\Filament\Imports\AssetImporter;
 use App\Filament\Resources\Assets\AssetResource;
 use Filament\Actions\CreateAction;
+use Filament\Actions\ImportAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Widgets\StatsOverviewWidget;
 
@@ -19,6 +21,13 @@ class ListAssets extends ListRecords
     {
         return [
             CreateAction::make()->label('Nouvelle Immobilisation')->icon('heroicon-s-plus'),
+            ImportAction::make()
+                ->importer(AssetImporter::class)
+                ->label('Importer des actifs')
+                ->icon('heroicon-o-arrow-up-tray')
+                ->modalHeading('Importer des actifs')
+                ->modalDescription('Veuillez selectionner un fichiers csv formater afin d\'importer vos actifs dans le logiciel.')
+                ->modalSubmitActionLabel('Importer'),
         ];
     }
 

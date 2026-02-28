@@ -61,19 +61,16 @@ it('interdit la suppression d\'un actif dont les écritures sont validées', fun
     $user = User::factory()->create();
     $asset = Asset::factory()->create();
 
-    // On simule une ligne d'amortissement déjà envoyée en compta
-    $asset->amortizationLines()->create([
-        'year' => 2024,
-        'base_value' => 1000,
-        'annuity_amount' => 200,
-        'accumulated_amount' => 200,
-        'book_value' => 800,
+    // On simule une écriture comptable validée
+    \App\Models\AmortizationLine::factory()->create([
+        'asset_id' => $asset->id,
         'is_posted' => true,
     ]);
 
     $this->actingAs($user)
         ->deleteJson("/api/v1/fixed-assets/assets/{$asset->id}")
-        ->assertStatus(403);
+        ->assertStatus(403)
+        ->assertJson(['message' => 'Impossible de supprimer un actif comptabilisé.']);
 
-    $this->assertDatabaseHas('assets', ['id' => $asset->id]);
+    $this->assertNotSoftDeleted($asset);
 });
