@@ -1,5 +1,10 @@
 {
     "$schema": "https://www.schemastore.org/package.json",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/BatistackApp/Immobilisator.git"
+    },
+    "name": "immobilisator",
     "private": true,
     "type": "module",
     "scripts": {
