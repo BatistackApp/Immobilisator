@@ -12,7 +12,7 @@ enum AssetType: string implements HasLabel
 
     public function getLabel(): string|Htmlable|null
     {
-        return match($this) {
+        return match ($this) {
             self::Tangible => 'Immobilisation Corporelle',
             self::Intangible => 'Immobilisation Incorporelle',
             default => null,

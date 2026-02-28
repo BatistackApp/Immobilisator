@@ -21,13 +21,13 @@ class AssetEvolutionChart extends ChartWidget
         // Pour un actif seul, la somme d'une ligne par année retournera la valeur correcte.
         $query = AmortizationLine::query()
             ->select('year', DB::raw('SUM(book_value) as total_vnc'))
-            ->when($this->record, fn($q) => $q->where('asset_id', $this->record->id))
+            ->when($this->record, fn ($q) => $q->where('asset_id', $this->record->id))
             ->groupBy('year')
             ->orderBy('year');
 
         // Pour la vue globale, on limite aux 10 prochaines années
         // Pour un actif seul, on affiche toute sa durée de vie calculée
-        if (!$this->record) {
+        if (! $this->record) {
             $query->where('year', '>=', now()->year)->limit(10);
         }
 

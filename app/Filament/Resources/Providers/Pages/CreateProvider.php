@@ -6,14 +6,14 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Filament\Resources\Providers\ProviderResource;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use League\Csv\Exception;
 
 class CreateProvider extends CreateRecord
 {
     protected static string $resource = ProviderResource::class;
+
     protected static ?string $title = "Création d'un Tier";
+
     protected static ?string $breadcrumb = 'Création';
 
     protected function handleRecordCreation(array $data): Model

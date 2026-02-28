@@ -13,7 +13,7 @@ enum InterventionType: string implements HasLabel
 
     public function getLabel(): string|Htmlable|null
     {
-        return match($this) {
+        return match ($this) {
             self::Repair => 'Réparation',
             self::Improvement => 'Amélioration',
             self::Preventive => 'Entretien préventif',

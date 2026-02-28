@@ -21,6 +21,7 @@ use Filament\Tables\Table;
 class LeasingRelationManager extends RelationManager
 {
     protected static string $relationship = 'leasing';
+
     protected static ?string $title = 'Contrat de Crédit-Bail';
 
     protected static ?string $relatedResource = AssetResource::class;

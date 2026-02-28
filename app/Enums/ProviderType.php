@@ -13,7 +13,7 @@ enum ProviderType: string implements HasLabel
 
     public function getLabel(): string|Htmlable|null
     {
-        return match($this) {
+        return match ($this) {
             self::Supplier => 'Fournisseur',
             self::Bank => 'Banque',
             self::Lessor => 'Bailleur',

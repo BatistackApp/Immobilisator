@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 class AmortizationLinesRelationManager extends RelationManager
 {
     protected static string $relationship = 'amortizationLines';
+
     protected static ?string $title = 'Tableau d\'amortissement';
 
     public function table(Table $table): Table

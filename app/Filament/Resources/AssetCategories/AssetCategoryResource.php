@@ -21,7 +21,9 @@ class AssetCategoryResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
     protected static string|null|\UnitEnum $navigationGroup = 'Configuration';
+
     protected static ?string $navigationLabel = 'Catégories d\'actif';
+
     protected static ?string $breadcrumb = 'Catégories d\'actif';
 
     public static function form(Schema $schema): Schema
