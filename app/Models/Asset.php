@@ -37,6 +37,7 @@ class Asset extends Model
         'metadata',
         'depreciable_basis',
         'provider_id',
+        'invoice_path',
     ];
 
     protected function casts(): array
