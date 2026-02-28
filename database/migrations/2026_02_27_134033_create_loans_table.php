@@ -6,7 +6,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('loans', function (Blueprint $table) {
@@ -18,6 +19,7 @@ return new class extends Migration {
             $table->integer('duration_months');
             $table->date('first_installment_date');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\AmortizationMethod;
 use App\Enums\AssetStatus;
 use App\Enums\FundingType;
+use App\Observers\AssetObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[ObservedBy([AssetObserver::class])]
 class Asset extends Model
 {
     use HasFactory, SoftDeletes;
@@ -32,17 +35,9 @@ class Asset extends Model
         'amortization_method',
         'status',
         'metadata',
+        'depreciable_basis',
+        'provider_id',
     ];
-
-    public function assetCategory(): BelongsTo
-    {
-        return $this->belongsTo(AssetCategory::class);
-    }
-
-    public function location(): BelongsTo
-    {
-        return $this->belongsTo(Location::class);
-    }
 
     protected function casts(): array
     {
@@ -61,7 +56,7 @@ class Asset extends Model
         return $this->belongsTo(AssetCategory::class, 'asset_category_id');
     }
 
-    public function localisation(): BelongsTo
+    public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class, 'location_id');
     }
@@ -89,5 +84,10 @@ class Asset extends Model
     public function amortizationLines(): HasMany
     {
         return $this->hasMany(AmortizationLine::class)->orderBy('year');
+    }
+
+    public function latestAmortizationLine(): HasOne
+    {
+        return $this->hasOne(AmortizationLine::class)->latestOfMany();
     }
 }

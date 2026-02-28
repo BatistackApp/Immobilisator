@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Loan extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'asset_id',
@@ -27,6 +29,18 @@ class Loan extends Model
     public function provider(): BelongsTo
     {
         return $this->belongsTo(Provider::class);
+    }
+
+    public function category(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            AssetCategory::class,
+            Asset::class,
+            'id',
+            'id',
+            'asset_id',
+            'asset_category_id'
+        );
     }
 
     protected function casts(): array

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\InterventionType;
 use App\Models\Asset;
 use App\Models\Intervention;
 use App\Models\Provider;
@@ -15,7 +16,7 @@ class InterventionFactory extends Factory
     public function definition(): array
     {
         return [
-            'type' => $this->faker->word(),
+            'type' => $this->faker->randomElement(InterventionType::cases()),
             'title' => $this->faker->word(),
             'description' => $this->faker->text(),
             'cost' => $this->faker->randomFloat(),

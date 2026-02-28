@@ -17,6 +17,7 @@ class AssetCategory extends Model
         'accounting_code_asset',
         'accounting_code_depreciation',
         'accounting_code_provision',
+        'default_useful_life',
     ];
 
     protected function casts(): array

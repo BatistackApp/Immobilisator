@@ -6,7 +6,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('leasings', function (Blueprint $table) {
@@ -20,6 +21,7 @@ return new class extends Migration {
             $table->date('end_date');
             $table->boolean('option_exercised');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
