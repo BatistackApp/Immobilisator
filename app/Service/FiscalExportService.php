@@ -131,4 +131,27 @@ class FiscalExportService
             ->waitUntilNetworkIdle()
             ->pdf();
     }
+
+    /**
+     * Génère la fiche individuelle d'une immobilisation au format PDF.
+     */
+    public function generateAssetReportPdf(Asset $asset): string
+    {
+        $settings = CompanySettings::first();
+
+        // On charge les relations nécessaires pour éviter les requêtes N+1 dans la vue
+        $asset->load(['category', 'location', 'provider', 'amortizationLines', 'leasing', 'loan', 'interventions']);
+
+        $html = View::make('pdf.asset-report', [
+            'asset' => $asset,
+            'settings' => $settings,
+        ])->render();
+
+        return Browsershot::html($html)
+            ->format('A4')
+            ->showBackground()
+            ->margins(10, 10, 10, 10)
+            ->waitUntilNetworkIdle()
+            ->pdf();
+    }
 }

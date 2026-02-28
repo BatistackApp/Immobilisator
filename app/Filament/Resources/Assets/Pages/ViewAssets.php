@@ -4,8 +4,12 @@ namespace App\Filament\Resources\Assets\Pages;
 
 use App\Filament\Resources\Assets\AssetResource;
 use App\Filament\Widgets\AssetEvolutionChart;
+use App\Models\Asset;
+use App\Service\FiscalExportService;
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Icons\Heroicon;
 
 class ViewAssets extends ViewRecord
 {
@@ -19,6 +23,18 @@ class ViewAssets extends ViewRecord
     {
         return [
             EditAction::make()->label('Modifier'),
+            Action::make('print')
+                ->label('Imprimer')
+                ->color('warning')
+                ->icon(Heroicon::OutlinedPrinter)
+                ->action(function (Asset $record, FiscalExportService $exportService) {
+                    $pdfContent = $exportService->generateAssetReportPdf($record);
+
+                    return response()->streamDownload(
+                        fn () => print ($pdfContent),
+                        "fiche_immo_{$record->reference}.pdf"
+                    );
+                }),
         ];
     }
 
