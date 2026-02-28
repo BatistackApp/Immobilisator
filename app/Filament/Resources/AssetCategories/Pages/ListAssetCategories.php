@@ -9,7 +9,9 @@ use Filament\Resources\Pages\ListRecords;
 class ListAssetCategories extends ListRecords
 {
     protected static string $resource = AssetCategoryResource::class;
+
     protected static ?string $title = 'Liste des Catégories';
+
     protected static ?string $breadcrumb = 'Liste des Catégories';
 
     protected function getHeaderActions(): array

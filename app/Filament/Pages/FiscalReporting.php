@@ -3,13 +3,14 @@
 namespace App\Filament\Pages;
 
 use App\Models\Asset;
+use App\Service\FiscalExportService;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 
 class FiscalReporting extends Page implements HasTable
@@ -58,12 +59,27 @@ class FiscalReporting extends Page implements HasTable
                     ->weight('bold'),
             ])
             ->headerActions([
-                Action::make('export')
-                    ->label('Exporter PDF')
+                Action::make('export_2054')
+                    ->label('Exporter 2054 (PDF)')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->action(fn () => // Logique d'export PDF...
-                    null
-                    ),
+                    ->color('primary')
+                    ->action(function (FiscalExportService $exportService) {
+                        $year = Carbon::now()->year;
+                        $pdfContent = $exportService->generateHtmlOutput($year);
+
+                        return response()->streamDownload(fn () => print ($pdfContent), "liasse_2054_{$year}.pdf");
+                    }),
+
+                Action::make('export_2055')
+                    ->label('Exporter 2055 (PDF)')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('primary')
+                    ->action(function (FiscalExportService $exportService) {
+                        $year = Carbon::now()->year;
+                        $pdfContent = $exportService->generate2055Pdf($year);
+
+                        return response()->streamDownload(fn () => print ($pdfContent), "liasse_2055_{$year}.pdf");
+                    }),
             ]);
     }
 }

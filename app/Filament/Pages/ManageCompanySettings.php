@@ -3,8 +3,8 @@
 namespace App\Filament\Pages;
 
 use App\Models\CompanySettings;
-use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -58,6 +58,30 @@ class ManageCompanySettings extends Page implements HasSchemas
                         ]),
                     ]),
 
+                Section::make('Coordonnées de la société')
+                    ->description('Ces informations apparaîtront sur vos rapports fiscaux et exports PDF.')
+                    ->schema([
+                        Textarea::make('address')
+                            ->label('Adresse Postal')
+                            ->required(),
+
+                        Grid::make(3)
+                            ->schema([
+                                TextInput::make('postal_code')
+                                    ->label('Code Postal')
+                                    ->numeric()
+                                    ->required(),
+
+                                TextInput::make('city')
+                                    ->label('Ville')
+                                    ->required(),
+
+                                TextInput::make('country')
+                                    ->label('Pays')
+                                    ->required(),
+                            ]),
+                    ]),
+
                 Section::make('Configuration Fiscale')
                     ->description('Paramètres critiques pour le calcul du prorata temporis.')
                     ->schema([
@@ -72,15 +96,6 @@ class ManageCompanySettings extends Page implements HasSchemas
                     ]),
             ])
             ->statePath('data');
-    }
-
-    protected function getFormActions(): array
-    {
-        return [
-            Action::make('save')
-                ->label('Enregistrer les modifications')
-                ->submit('save'),
-        ];
     }
 
     public function save(): void

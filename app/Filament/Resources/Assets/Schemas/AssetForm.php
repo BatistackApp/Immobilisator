@@ -119,6 +119,21 @@ class AssetForm
                                         ->prefix('€'),
                                 ]),
                             ]),
+
+                        Tabs\Tab::make('Documents & Justificatifs')
+                            ->icon('heroicon-m-document-text')
+                            ->schema([
+                                Forms\Components\FileUpload::make('invoice_path')
+                                    ->label('Facture')
+                                    ->disk('public') // Assurez-vous que le lien symbolique est créé
+                                    ->directory('assets/invoices')
+                                    ->visibility('public')
+                                    ->acceptedFileTypes(['application/pdf', 'image/*'])
+                                    ->maxSize(5120) // 5Mo
+                                    ->downloadable()
+                                    ->openable()
+                                    ->hint('Formats acceptés : PDF, JPG, PNG'),
+                            ]),
                     ])->columnSpanFull(),
             ]);
     }

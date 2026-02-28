@@ -45,7 +45,6 @@ class Leasing extends Model
         );
     }
 
-
     protected function casts(): array
     {
         return [

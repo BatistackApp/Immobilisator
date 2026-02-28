@@ -19,7 +19,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class AssetResource extends Resource
@@ -29,6 +28,7 @@ class AssetResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static string|null|\UnitEnum $navigationGroup = 'Gestion des Actifs';
+
     protected static ?string $navigationLabel = 'Immobilisations';
 
     public static function form(Schema $schema): Schema

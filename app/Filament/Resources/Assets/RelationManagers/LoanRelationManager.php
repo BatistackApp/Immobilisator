@@ -19,6 +19,7 @@ use Filament\Tables\Table;
 class LoanRelationManager extends RelationManager
 {
     protected static string $relationship = 'loan';
+
     protected static ?string $title = 'Financement Bancaire';
 
     public function isReadOnly(): bool

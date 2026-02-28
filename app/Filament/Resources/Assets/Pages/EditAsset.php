@@ -11,7 +11,9 @@ use Filament\Resources\Pages\EditRecord;
 class EditAsset extends EditRecord
 {
     protected static string $resource = AssetResource::class;
+
     protected static ?string $title = 'Editer Immobilisation';
+
     protected static ?string $breadcrumb = 'Editer Immobilisation';
 
     protected function getHeaderActions(): array

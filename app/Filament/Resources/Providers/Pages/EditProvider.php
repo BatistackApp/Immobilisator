@@ -10,7 +10,9 @@ use Filament\Resources\Pages\EditRecord;
 class EditProvider extends EditRecord
 {
     protected static string $resource = ProviderResource::class;
+
     protected static ?string $title = "Edition d'un Tier";
+
     protected static ?string $breadcrumb = 'Edition';
 
     protected function getHeaderActions(): array

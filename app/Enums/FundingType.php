@@ -14,7 +14,7 @@ enum FundingType: string implements HasLabel
 
     public function getLabel(): string|Htmlable|null
     {
-        return match($this) {
+        return match ($this) {
             self::OwnFunds => 'Fonds propres',
             self::Leasing => 'Crédit-bail',
             self::Rental => 'Location simple',
