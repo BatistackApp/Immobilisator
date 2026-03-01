@@ -9,7 +9,6 @@ use App\Filament\Resources\Assets\Widgets\AssetStatsOverview;
 use App\Filament\Widgets\AssetEvolutionChart;
 use App\Filament\Widgets\LatestAssetsTable;
 use App\Filament\Widgets\MaintenanceAlertsTable;
-use App\Filament\Widgets\VncProjectionChart;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;

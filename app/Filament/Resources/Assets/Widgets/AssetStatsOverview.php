@@ -17,9 +17,12 @@ class AssetStatsOverview extends StatsOverviewWidget
 
         // 2. VNC Totale (Dernière ligne calculée par actif)
         $totalVnc = DB::table('amortization_lines')
-            ->whereIn('id', function ($query) {
+            ->join('assets', 'amortization_lines.asset_id', '=', 'assets.id')
+            ->where('assets.status', '!=', AssetStatus::Disposed->value) // Assure que seuls les actifs non cédés sont inclus
+            ->whereIn('amortization_lines.id', function ($query) {
                 $query->selectRaw('max(id)')->from('amortization_lines')->groupBy('asset_id');
-            })->sum('book_value');
+            })
+            ->sum('amortization_lines.book_value');
 
         // 3. Alertes (Maintenance + Fin d'amortissement)
         $alerts = Asset::where('status', AssetStatus::Active)
@@ -33,7 +36,7 @@ class AssetStatsOverview extends StatsOverviewWidget
             Stat::make('Valeur Nette (VNC)', number_format($totalVnc, 2, ',', ' ').' €')
                 ->description('Reste à amortir')
                 ->color('primary'),
-            Stat::make('Actions Requises', $alerts)
+            Stat::make('Alertes Maintenance', $alerts)
                 ->description('Maintenances sous 15 jours')
                 ->color($alerts > 0 ? 'danger' : 'gray'),
         ];
