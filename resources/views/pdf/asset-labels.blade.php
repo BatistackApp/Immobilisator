@@ -45,7 +45,7 @@
                 </p>
             </div>
             <div class="w-1/3 flex justify-end">
-                <img src="{{ $asset['qr_code'] }}" class="w-24 h-24">
+                <img src="{{ $asset['qr_code'] }}" class="w-12 h-12">
             </div>
         </div>
     @endforeach

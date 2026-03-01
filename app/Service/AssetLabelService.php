@@ -35,7 +35,7 @@ class AssetLabelService
 
         // On prépare les données
         $preparedAssets = $assets->map(function (Asset $asset) use ($qrcode) {
-            $url = config('app.url')."/admin/assets/{$asset->id}";
+            $url = url('/admin/assets/'.$asset->id);
 
             return [
                 'reference' => $asset->reference,
