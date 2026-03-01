@@ -2,9 +2,12 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\AmortizationLine;
 use App\Models\Asset;
+use App\Service\AccountingExportService;
 use App\Service\FiscalExportService;
 use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -20,6 +23,8 @@ class FiscalReporting extends Page implements HasTable
     protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-document-chart-bar';
 
     protected static string|null|\UnitEnum $navigationGroup = 'Reporting';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationLabel = 'États Fiscaux (2054/2055)';
 
@@ -79,6 +84,43 @@ class FiscalReporting extends Page implements HasTable
                         $pdfContent = $exportService->generate2055Pdf($year);
 
                         return response()->streamDownload(fn () => print ($pdfContent), "liasse_2055_{$year}.pdf");
+                    }),
+
+                Action::make('export_accounting')
+                    ->label('Générer les écritures (CSV)')
+                    ->icon('heroicon-o-arrow-right-end-on-rectangle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Exportation & Verrouillage')
+                    ->modalDescription('Voulez-vous générer le fichier CSV des dotations pour l\'exercice '.$currentYear.' ? Attention : cette action marquera les lignes d\'amortissement comme "Comptabilisées" et les verrouillera contre toute modification future.')
+                    ->action(function (AccountingExportService $service) use ($currentYear) {
+                        // 1. On appelle le service pour générer le contenu (basé sur is_posted = false)
+                        $csvContent = $service->generateDotationsCsv($currentYear);
+
+                        // 2. On verrouille les lignes d'amortissement de l'année en cours
+                        $updatedCount = AmortizationLine::where('year', $currentYear)
+                            ->where('is_posted', false)
+                            ->update(['is_posted' => true]);
+
+                        if ($updatedCount > 0) {
+                            Notification::make()
+                                ->title('Exportation réussie')
+                                ->body("$updatedCount lignes d'amortissement ont été marquées comme comptabilisées.")
+                                ->success()
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->title('Aucune nouvelle donnée')
+                                ->body("Toutes les lignes de l'exercice $currentYear ont déjà été comptabilisées.")
+                                ->warning()
+                                ->send();
+                        }
+
+                        // 3. On déclenche le téléchargement du fichier
+                        return response()->streamDownload(
+                            fn () => print ($csvContent),
+                            "dotations_compta_{$currentYear}.csv"
+                        );
                     }),
             ]);
     }
