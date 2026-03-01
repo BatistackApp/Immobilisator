@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\CompanySettings;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,9 +17,20 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $company = CompanySettings::create([
+            'company_name' => 'demo',
+            'address' => 'Demo Address',
+            'postal_code' => '12345',
+            'city' => 'Demo City',
+            'country' => 'Demo Country',
         ]);
+
+        Artisan::call('make:filament-user', [
+            '--name' => 'admin',
+            '--email' => 'admin@admin.com',
+            '--password' => 'admin',
+        ]);
+
+        $company->update(['seeded' => true]);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\CompanySettings;
+use Illuminate\Support\Facades\Artisan;
 use Native\Desktop\Contracts\ProvidesPhpIni;
 use Native\Desktop\Facades\Window;
 
@@ -16,6 +18,10 @@ class NativeAppServiceProvider implements ProvidesPhpIni
         Window::open()
             ->width(1920)
             ->height(1080);
+
+        if (CompanySettings::where('seeded', true)->count() === 0) {
+            Artisan::call('db:seed');
+        }
     }
 
     /**

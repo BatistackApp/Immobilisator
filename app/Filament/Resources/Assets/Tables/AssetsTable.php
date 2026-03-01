@@ -5,8 +5,10 @@ namespace App\Filament\Resources\Assets\Tables;
 use App\Enums\AssetStatus;
 use App\Models\Asset;
 use App\Service\AmortizationService;
+use App\Service\AssetLabelService;
 use App\Service\DisposalService;
 use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -21,6 +23,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class AssetsTable
 {
@@ -110,6 +113,14 @@ class AssetsTable
                     DeleteBulkAction::make(),
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
+                    BulkAction::make('print_label')
+                        ->label('Imprimer Étiquettes (PDF)')
+                        ->icon('heroicon-o-qr-code')
+                        ->action(function (Collection $records, AssetLabelService $service) {
+                            $pdf = $service->generateLabelsPdf($records);
+
+                            return response()->streamDownload(fn () => print ($pdf), 'etiquettes_inventaire.pdf');
+                        }),
                 ]),
             ]);
     }
