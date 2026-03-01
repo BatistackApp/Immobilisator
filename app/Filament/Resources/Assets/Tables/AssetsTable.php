@@ -4,11 +4,13 @@ namespace App\Filament\Resources\Assets\Tables;
 
 use App\Enums\AssetStatus;
 use App\Filament\Resources\Assets\Actions\DisposeAction;
+use App\Filament\Resources\Assets\Actions\RevaluateAction;
 use App\Models\Asset;
 use App\Service\AmortizationService;
 use App\Service\AssetLabelService;
 use App\Service\DisposalService;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -23,6 +25,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -62,24 +65,28 @@ class AssetsTable
                     ->relationship('category', 'name'),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-                // ACTION : RECALCULER LE PLAN
-                Action::make('recalculate')
-                    ->label('Recalculer')
-                    ->icon('heroicon-o-arrow-path')
-                    ->color('warning')
-                    ->requiresConfirmation()
-                    ->action(function (Asset $record, AmortizationService $service) {
-                        $service->generateSchedule($record);
-                        Notification::make()
-                            ->title('Tableau d\'amortissement mis à jour')
-                            ->success()
-                            ->send();
-                    }),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make()->visible(fn (Model $record) => $record->status !== AssetStatus::Disposed),
+                    // ACTION : RECALCULER LE PLAN
+                    Action::make('recalculate')
+                        ->label('Recalculer')
+                        ->icon('heroicon-o-arrow-path')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->visible(fn (Model $record) => $record->status !== AssetStatus::Disposed)
+                        ->action(function (Asset $record, AmortizationService $service) {
+                            $service->generateSchedule($record);
+                            Notification::make()
+                                ->title('Tableau d\'amortissement mis à jour')
+                                ->success()
+                                ->send();
+                        }),
 
-                // ACTION : CESSION / SORTIE
-                DisposeAction::make(),
+                    // ACTION : CESSION / SORTIE
+                    DisposeAction::make()->visible(fn (Model $record) => $record->status !== AssetStatus::Disposed),
+                    RevaluateAction::make()->visible(fn (Model $record) => $record->status !== AssetStatus::Disposed),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
