@@ -18,12 +18,14 @@ class CompanySettings extends Model
         'country',
         'fiscal_year_start_month',
         'amortization_options',
+        'seeded',
     ];
 
     protected function casts(): array
     {
         return [
             'amortization_options' => 'array',
+            'seeded' => 'boolean',
         ];
     }
 }
