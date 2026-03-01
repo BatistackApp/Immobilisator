@@ -12,42 +12,39 @@ class AssetStatsOverview extends StatsOverviewWidget
 {
     protected function getStats(): array
     {
-        // 1. Valeur Brute Totale (simple sum)
-        $totalGrossValue = Asset::where('status', '!=', AssetStatus::Disposed)
-            ->sum('acquisition_value');
+        // Utilisation des Enums pour la lisibilité
+        $totalGross = Asset::where('status', '!=', AssetStatus::Disposed)->sum('acquisition_value');
 
-        // 2. VNC Totale Optimisée
-        // Au lieu d'un whereIn avec une sous-requête complexe, on utilise une jointure
-        // ou une agrégation directe sur la dernière ligne connue par actif.
+        // Idéalement, déplacer ce calcul complexe dans une classe de Service
+        // Mais si on le garde ici, attention aux performances sur gros volumes.
         $totalVnc = DB::table('assets')
-            ->join('amortization_lines', function ($join) {
-                $join->on('assets.id', '=', 'amortization_lines.asset_id')
-                    ->whereRaw('amortization_lines.id = (SELECT MAX(id) FROM amortization_lines WHERE asset_id = assets.id)');
-            })
-            ->whereNull('assets.deleted_at')
+            ->join('amortization_lines', 'assets.id', '=', 'amortization_lines.asset_id')
+            // Optimisation : Utiliser une jointure latérale ou une fenêtre si la DB le permet (Postgres/MySQL 8)
+            // Sinon, s'assurer que l'amortissement est calculé correctement.
             ->where('assets.status', '!=', AssetStatus::Disposed->value)
+            ->whereRaw('amortization_lines.date = (SELECT MAX(date) FROM amortization_lines WHERE asset_id = assets.id)')
             ->sum('amortization_lines.book_value');
 
-        // 3. Alertes Maintenance
-        $maintenanceAlerts = Asset::where('metadata->next_maintenance_date', '<=', now()->addDays(15))
-            ->where('status', '!=', AssetStatus::Disposed)
+        // Harmonisation à 30 jours pour la cohérence avec le tableau
+        $alertDays = 30;
+        $alerts = Asset::where('status', AssetStatus::Active)
+            ->where('metadata->next_maintenance_date', '<=', now()->addDays($alertDays))
+            // Exclure ce qui est déjà passé (retard) ou le compter différemment ?
+            ->where('metadata->next_maintenance_date', '>=', now()->subYear())
             ->count();
 
         return [
-            Stat::make('Valeur Brute Globale', number_format($totalGrossValue, 2, ',', ' ').' €')
-                ->description('Total des acquisitions actives')
-                ->descriptionIcon('heroicon-m-banknotes')
+            Stat::make('Valeur Brute (HT)', number_format($totalGross, 2, ',', ' ').' €') // Précision HT
+                ->description('Investissement parc actif')
                 ->color('success'),
 
-            Stat::make('Valeur Nette Comptable', number_format($totalVnc, 2, ',', ' ').' €')
-                ->description('VNC totale du parc actif')
-                ->descriptionIcon('heroicon-m-chart-bar')
+            Stat::make('VNC Actuelle', number_format($totalVnc, 2, ',', ' ').' €')
+                ->description('Valeur résiduelle comptable')
                 ->color('primary'),
 
-            Stat::make('Alertes Maintenance', $maintenanceAlerts)
-                ->description('Sous 15 jours')
-                ->descriptionIcon('heroicon-m-wrench-screwdriver')
-                ->color($maintenanceAlerts > 0 ? 'danger' : 'gray'),
+            Stat::make('Maintenances à venir', $alerts)
+                ->description("Interventions sous $alertDays jours") // Texte dynamique
+                ->color($alerts > 0 ? 'danger' : 'gray'),
         ];
     }
 }

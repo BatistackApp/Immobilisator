@@ -7,6 +7,8 @@ use App\Filament\Pages\ManageCompanySettings;
 use App\Filament\Resources\Assets\Widgets\AssetCategoryChart;
 use App\Filament\Resources\Assets\Widgets\AssetStatsOverview;
 use App\Filament\Widgets\AssetEvolutionChart;
+use App\Filament\Widgets\LatestAssetsTable;
+use App\Filament\Widgets\MaintenanceAlertsTable;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -47,6 +49,8 @@ class AdminPanelProvider extends PanelProvider
                 AssetStatsOverview::class,
                 AssetEvolutionChart::class,
                 AssetCategoryChart::class,
+                LatestAssetsTable::class,
+                MaintenanceAlertsTable::class,
             ])
             ->middleware([
                 EncryptCookies::class,
