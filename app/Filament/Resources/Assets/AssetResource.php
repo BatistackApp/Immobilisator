@@ -6,6 +6,7 @@ use App\Filament\Resources\Assets\Pages\CreateAsset;
 use App\Filament\Resources\Assets\Pages\EditAsset;
 use App\Filament\Resources\Assets\Pages\ListAssets;
 use App\Filament\Resources\Assets\Pages\ViewAssets;
+use App\Filament\Resources\Assets\RelationManagers\AuditLogsRelationManager;
 use App\Filament\Resources\Assets\RelationManagers\LeasingRelationManager;
 use App\Filament\Resources\Assets\RelationManagers\LoanRelationManager;
 use App\Filament\Resources\Assets\Relations\AmortizationLinesRelationManager;
@@ -48,6 +49,7 @@ class AssetResource extends Resource
             InterventionsRelationManager::class,
             LeasingRelationManager::class,
             LoanRelationManager::class,
+            AuditLogsRelationManager::class,
         ];
     }
 

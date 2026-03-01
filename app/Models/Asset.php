@@ -6,6 +6,7 @@ use App\Enums\AmortizationMethod;
 use App\Enums\AssetStatus;
 use App\Enums\FundingType;
 use App\Observers\AssetObserver;
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[ObservedBy([AssetObserver::class])]
 class Asset extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'asset_category_id',

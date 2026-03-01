@@ -5,6 +5,9 @@ namespace App\Service;
 use App\Enums\AssetStatus;
 use App\Models\Asset;
 use App\Models\CompanySettings;
+use chillerlan\QRCode\Output\QROutputInterface;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 use Spatie\Browsershot\Browsershot;
@@ -139,12 +142,31 @@ class FiscalExportService
     {
         $settings = CompanySettings::first();
 
+        // Configuration du QR Code pour un rendu propre en base64
+        $options = new QROptions([
+            'version' => QRCode::VERSION_AUTO,
+            'outputType' => QROutputInterface::GDIMAGE_PNG,
+            'eccLevel' => QRCode::ECC_L,
+            'scale' => 5,
+            'imageBase64' => true,
+            'bgColor' => [255, 255, 255],
+            'imageTransparent' => false,
+            'drawCircularModules' => false,
+        ]);
+
+        $qrcode = new QRCode($options);
+
+        // L'URL pointe vers la fiche détaillée dans l'administration Filament
+        $url = config('app.url')."/admin/assets/{$asset->id}";
+        $qrCodeUri = $qrcode->render($url);
+
         // On charge les relations nécessaires pour éviter les requêtes N+1 dans la vue
         $asset->load(['category', 'location', 'provider', 'amortizationLines', 'leasing', 'loan', 'interventions']);
 
         $html = View::make('pdf.asset-report', [
             'asset' => $asset,
             'settings' => $settings,
+            'qr_code_uri' => $qrCodeUri,
         ])->render();
 
         return Browsershot::html($html)
