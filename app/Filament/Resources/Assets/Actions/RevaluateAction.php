@@ -9,7 +9,9 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Number;
 
 class RevaluateAction
 {
@@ -47,7 +49,7 @@ class RevaluateAction
                     Carbon::parse($data['revaluation_date']),
                     (float) $data['fair_value'],
                     $data['expert_name'],
-                    $data['notes']
+                    $data['notes'],
                 );
 
                 Notification::make()
