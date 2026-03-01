@@ -97,7 +97,11 @@ class FiscalReporting extends Page implements HasTable
                         // 1. On appelle le service pour générer le contenu (basé sur is_posted = false)
                         $csvContent = $service->generateDotationsCsv($currentYear);
 
-                        $csvContent = $service->comptabilisation($csvContent, $currentYear);
+                        $finalCsvContent = $service->markLinesAsPostedAndNotify($csvContent, $currentYear);
+
+                        if (is_null($finalCsvContent)) {
+                            return;
+                        }
 
                         // 3. On déclenche le téléchargement du fichier
                         return response()->streamDownload(

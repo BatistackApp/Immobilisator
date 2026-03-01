@@ -70,7 +70,7 @@ class AccountingExportService
         return $csvContent;
     }
 
-    public function comptabilisation(string $csvContent, string $currentYear): ?string
+    public function markLinesAsPostedAndNotify(string $csvContent, int $currentYear): ?string
     {
         if (empty(trim($csvContent))) { // Vérifier si le CSV est vide (pas de lignes à exporter)
             Notification::make()
