@@ -3,6 +3,8 @@
 namespace App\Service;
 
 use App\Models\AmortizationLine;
+use DB;
+use Filament\Notifications\Notification;
 
 class AccountingExportService
 {
@@ -65,5 +67,57 @@ class AccountingExportService
         fclose($handle);
 
         return $csvContent;
+    }
+
+    public function comptabilisation(string $csvContent, string $currentYear): ?string
+    {
+        if (empty(trim($csvContent))) { // Vérifier si le CSV est vide (pas de lignes à exporter)
+            Notification::make()
+                ->title('Aucune donnée à exporter')
+                ->body("Il n'y a aucune ligne d'amortissement non comptabilisée pour l'exercice $currentYear.")
+                ->warning()
+                ->send();
+
+            return null; // Ne pas continuer si rien à exporter
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $updatedCount = AmortizationLine::where('year', $currentYear)
+                ->where('is_posted', false)
+                ->update(['is_posted' => true]);
+
+            DB::commit(); // Commit la transaction si tout se passe bien
+
+            if ($updatedCount > 0) {
+                Notification::make()
+                    ->title('Exportation réussie et lignes verrouillées')
+                    ->body("$updatedCount lignes d'amortissement ont été marquées comme comptabilisées. Le téléchargement va commencer.")
+                    ->success()
+                    ->send();
+            } else {
+                Notification::make()
+                    ->title('Aucune nouvelle donnée')
+                    ->body("Toutes les lignes de l'exercice $currentYear ont déjà été comptabilisées.")
+                    ->warning()
+                    ->send();
+            }
+
+            // Déclenche le téléchargement après la mise à jour transactionnelle
+            return $csvContent;
+
+        } catch (\Exception $e) {
+            DB::rollBack(); // Annule la transaction en cas d'erreur
+            Notification::make()
+                ->title('Erreur lors de l\'exportation')
+                ->body("Une erreur est survenue lors de la mise à jour des lignes d'amortissement : ".$e->getMessage())
+                ->danger()
+                ->send();
+            // Log l'erreur pour débogage
+            \Log::error('Erreur lors de l\'exportation comptable', ['exception' => $e->getMessage(), 'year' => $currentYear]);
+
+            return null;
+        }
     }
 }

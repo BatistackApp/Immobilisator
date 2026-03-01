@@ -97,24 +97,7 @@ class FiscalReporting extends Page implements HasTable
                         // 1. On appelle le service pour générer le contenu (basé sur is_posted = false)
                         $csvContent = $service->generateDotationsCsv($currentYear);
 
-                        // 2. On verrouille les lignes d'amortissement de l'année en cours
-                        $updatedCount = AmortizationLine::where('year', $currentYear)
-                            ->where('is_posted', false)
-                            ->update(['is_posted' => true]);
-
-                        if ($updatedCount > 0) {
-                            Notification::make()
-                                ->title('Exportation réussie')
-                                ->body("$updatedCount lignes d'amortissement ont été marquées comme comptabilisées.")
-                                ->success()
-                                ->send();
-                        } else {
-                            Notification::make()
-                                ->title('Aucune nouvelle donnée')
-                                ->body("Toutes les lignes de l'exercice $currentYear ont déjà été comptabilisées.")
-                                ->warning()
-                                ->send();
-                        }
+                        $csvContent = $service->comptabilisation($csvContent, $currentYear);
 
                         // 3. On déclenche le téléchargement du fichier
                         return response()->streamDownload(
