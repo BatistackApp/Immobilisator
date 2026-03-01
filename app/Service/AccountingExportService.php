@@ -33,12 +33,14 @@ class AccountingExportService
             'Libellé',
             'Débit',
             'Crédit',
+            'Analytique'
         ], ';');
 
         foreach ($lines as $line) {
             $asset = $line->asset;
             $category = $asset->category;
             $date = Carbon::create($year, 12, 31)->format('d/m/Y');
+            $analyticCode = $asset->costCenter?->code ?? ''; // On récupère le code s'il existe
 
             // 1. Ligne de Débit (Compte 681 - Dotations)
             fputcsv($handle, [
@@ -49,6 +51,7 @@ class AccountingExportService
                 'DAP '.$year.' - '.$asset->designation,
                 round($line->annuity_amount, 2),
                 0,
+                $analyticCode,
             ], ';');
 
             // 2. Ligne de Crédit (Compte 28 - Amortissements)
@@ -60,6 +63,7 @@ class AccountingExportService
                 'DAP '.$year.' - '.$asset->designation,
                 0,
                 round($line->annuity_amount, 2),
+                $analyticCode,
             ], ';');
         }
 

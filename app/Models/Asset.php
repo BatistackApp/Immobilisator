@@ -89,6 +89,11 @@ class Asset extends Model
         return $this->hasMany(AmortizationLine::class)->orderBy('year');
     }
 
+    public function costCenter(): BelongsTo
+    {
+        return $this->belongsTo(CostCenter::class);
+    }
+
     public function latestAmortizationLine(): HasOne
     {
         return $this->hasOne(AmortizationLine::class)->latestOfMany();
