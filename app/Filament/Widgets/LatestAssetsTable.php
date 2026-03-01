@@ -24,6 +24,7 @@ class LatestAssetsTable extends TableWidget
             ->columns([
                 TextColumn::make('acquisition_date')->label('Date')->date('d/m/Y'),
                 TextColumn::make('reference')->label('Référence')->searchable(),
+                TextColumn::make('location')->label('Localisation')->searchable(),
                 TextColumn::make('designation')->label('Désignation'),
                 TextColumn::make('category.name')->label('Catégorie'),
                 TextColumn::make('acquisition_value')->label('Valeur HT')->money('EUR'),
