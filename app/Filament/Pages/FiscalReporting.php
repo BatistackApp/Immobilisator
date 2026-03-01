@@ -105,7 +105,7 @@ class FiscalReporting extends Page implements HasTable
 
                         // 3. On déclenche le téléchargement du fichier
                         return response()->streamDownload(
-                            fn () => print ($csvContent),
+                            fn () => print ($finalCsvContent),
                             "dotations_compta_{$currentYear}.csv"
                         );
                     }),
