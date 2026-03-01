@@ -18,7 +18,6 @@ return new class extends Migration {
             $table->string('user_agent')->nullable();
             $table->ipAddress('ip_address')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

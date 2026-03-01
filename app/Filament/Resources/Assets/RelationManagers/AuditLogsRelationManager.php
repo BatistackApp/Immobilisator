@@ -30,16 +30,6 @@ class AuditLogsRelationManager extends RelationManager
 
     protected static ?string $title = 'Piste d\'Audit (Historique)';
 
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TextInput::make('id')
-                    ->required()
-                    ->maxLength(255),
-            ]);
-    }
-
     public function table(Table $table): Table
     {
         return $table
@@ -79,12 +69,8 @@ class AuditLogsRelationManager extends RelationManager
                     })->html(),
             ])
             ->defaultSort('created_at', 'desc')
-            ->filters([
-                TrashedFilter::make(),
-            ])
-            ->modifyQueryUsing(fn (Builder $query) => $query
-                ->withoutGlobalScopes([
-                    SoftDeletingScope::class,
-                ]));
+            ->filters([])
+            ->headerActions([]) // Aucune action en en-tête
+            ->recordActions([]);
     }
 }

@@ -37,6 +37,15 @@ trait LogsActivity
 
     protected static function recordAudit(Model $model, string $event, ?array $old = null, ?array $new = null): void
     {
+        $userAgent = null;
+        $ipAddress = null;
+
+        if (app()->runningInConsole() === false && app()->bound('request')) {
+            $request = request();
+            $userAgent = $request->userAgent();
+            $ipAddress = $request->ip();
+        }
+
         AuditLog::create([
             'user_id' => Auth::id(),
             'auditable_id' => $model->getKey(),
@@ -44,8 +53,8 @@ trait LogsActivity
             'event' => $event,
             'old_values' => $old,
             'new_values' => $new,
-            'user_agent' => request()->userAgent(),
-            'ip_address' => request()->ip(),
+            'user_agent' => $userAgent,
+            'ip_address' => $ipAddress,
         ]);
     }
 
