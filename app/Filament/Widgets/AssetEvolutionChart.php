@@ -11,7 +11,7 @@ class AssetEvolutionChart extends ChartWidget
 {
     protected ?string $heading = 'Évolution de la Valeur Nette Comptable (VNC)';
 
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 3;
 
     public ?Model $record = null;
 

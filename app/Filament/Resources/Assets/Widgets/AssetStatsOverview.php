@@ -12,42 +12,30 @@ class AssetStatsOverview extends StatsOverviewWidget
 {
     protected function getStats(): array
     {
-        // 1. Valeur Brute Totale (simple sum)
-        $totalGrossValue = Asset::where('status', '!=', AssetStatus::Disposed)
-            ->sum('acquisition_value');
+        // 1. Valeur Brute (Actifs non cédés)
+        $totalGross = Asset::where('status', '!=', AssetStatus::Disposed)->sum('acquisition_value');
 
-        // 2. VNC Totale Optimisée
-        // Au lieu d'un whereIn avec une sous-requête complexe, on utilise une jointure
-        // ou une agrégation directe sur la dernière ligne connue par actif.
-        $totalVnc = DB::table('assets')
-            ->join('amortization_lines', function ($join) {
-                $join->on('assets.id', '=', 'amortization_lines.asset_id')
-                    ->whereRaw('amortization_lines.id = (SELECT MAX(id) FROM amortization_lines WHERE asset_id = assets.id)');
-            })
-            ->whereNull('assets.deleted_at')
-            ->where('assets.status', '!=', AssetStatus::Disposed->value)
-            ->sum('amortization_lines.book_value');
+        // 2. VNC Totale (Dernière ligne calculée par actif)
+        $totalVnc = DB::table('amortization_lines')
+            ->whereIn('id', function ($query) {
+                $query->selectRaw('max(id)')->from('amortization_lines')->groupBy('asset_id');
+            })->sum('book_value');
 
-        // 3. Alertes Maintenance
-        $maintenanceAlerts = Asset::where('metadata->next_maintenance_date', '<=', now()->addDays(15))
-            ->where('status', '!=', AssetStatus::Disposed)
+        // 3. Alertes (Maintenance + Fin d'amortissement)
+        $alerts = Asset::where('status', AssetStatus::Active)
+            ->where('metadata->next_maintenance_date', '<=', now()->addDays(15))
             ->count();
 
         return [
-            Stat::make('Valeur Brute Globale', number_format($totalGrossValue, 2, ',', ' ').' €')
-                ->description('Total des acquisitions actives')
-                ->descriptionIcon('heroicon-m-banknotes')
+            Stat::make('Valeur Brute Totale', number_format($totalGross, 2, ',', ' ').' €')
+                ->description('Coût historique du parc actif')
                 ->color('success'),
-
-            Stat::make('Valeur Nette Comptable', number_format($totalVnc, 2, ',', ' ').' €')
-                ->description('VNC totale du parc actif')
-                ->descriptionIcon('heroicon-m-chart-bar')
+            Stat::make('Valeur Nette (VNC)', number_format($totalVnc, 2, ',', ' ').' €')
+                ->description('Reste à amortir')
                 ->color('primary'),
-
-            Stat::make('Alertes Maintenance', $maintenanceAlerts)
-                ->description('Sous 15 jours')
-                ->descriptionIcon('heroicon-m-wrench-screwdriver')
-                ->color($maintenanceAlerts > 0 ? 'danger' : 'gray'),
+            Stat::make('Actions Requises', $alerts)
+                ->description('Maintenances sous 15 jours')
+                ->color($alerts > 0 ? 'danger' : 'gray'),
         ];
     }
 }

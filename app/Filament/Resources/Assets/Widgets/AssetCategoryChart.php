@@ -9,6 +9,7 @@ use Filament\Widgets\ChartWidget;
 class AssetCategoryChart extends ChartWidget
 {
     protected ?string $heading = 'Répartition de la Valeur Brute par Catégorie';
+    protected static ?int $sort = 3;
 
     protected function getData(): array
     {
