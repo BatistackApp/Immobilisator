@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\FiscalReporting;
 use App\Filament\Pages\ManageCompanySettings;
+use App\Filament\Resources\Assets\Widgets\AssetCategoryChart;
 use App\Filament\Resources\Assets\Widgets\AssetStatsOverview;
 use App\Filament\Widgets\AssetEvolutionChart;
 use Filament\Http\Middleware\Authenticate;
@@ -45,6 +46,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 AssetStatsOverview::class,
                 AssetEvolutionChart::class,
+                AssetCategoryChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,

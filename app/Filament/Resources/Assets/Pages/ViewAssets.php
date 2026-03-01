@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Assets\Pages;
 
+use App\Enums\AssetStatus;
 use App\Filament\Resources\Assets\AssetResource;
 use App\Filament\Widgets\AssetEvolutionChart;
 use App\Models\Asset;
@@ -33,6 +34,20 @@ class ViewAssets extends ViewRecord
                     return response()->streamDownload(
                         fn () => print ($pdfContent),
                         "fiche_immo_{$record->reference}.pdf"
+                    );
+                }),
+
+            Action::make('print_disposal')
+                ->visible(fn (Asset $record) => $record->status->value === AssetStatus::Disposed->value)
+                ->label('Certificat de cession')
+                ->color('success')
+                ->icon(Heroicon::OutlinedPrinter)
+                ->action(function (Asset $record, FiscalExportService $fiscalService) {
+                    $pdfContent = $fiscalService->generateDisposalCertificatePdf($record);
+
+                    return response()->streamDownload(
+                        fn () => print ($pdfContent),
+                        "certificat_sortie_{$record->reference}.pdf"
                     );
                 }),
         ];
