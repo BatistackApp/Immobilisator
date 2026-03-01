@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\AssetStatus;
+use App\Filament\Resources\Assets\AssetResource;
 use App\Models\Asset;
 use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
@@ -49,7 +50,7 @@ class MaintenanceAlertsTable extends TableWidget
             ->recordActions([
                 Action::make('view')
                     ->label('Voir la fiche')
-                    ->url(fn (Asset $record): string => "/admin/assets/{$record->id}/edit")
+                    ->url(fn (Asset $record): string => AssetResource::getUrl('edit', ['record' => $record]))
                     ->icon('heroicon-m-eye'),
             ]);
     }
