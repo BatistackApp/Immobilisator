@@ -154,4 +154,28 @@ class FiscalExportService
             ->waitUntilNetworkIdle()
             ->pdf();
     }
+
+    /**
+     * Génère le certificat de sortie (Cession/Rebut) au format PDF via Browsershot.
+     */
+    public function generateDisposalCertificatePdf(Asset $asset): string
+    {
+        // On récupère les réglages de la société
+        $settings = CompanySettings::first() ?? new CompanySettings(['company_name' => 'Immobilisator']);
+
+        // On s'assure que les relations nécessaires sont chargées
+        $asset->load(['category', 'amortizationLines']);
+
+        $html = View::make('pdf.disposal-certificate', [
+            'asset' => $asset,
+            'settings' => $settings,
+        ])->render();
+
+        return Browsershot::html($html)
+            ->format('A4')
+            ->showBackground()
+            ->margins(10, 10, 10, 10)
+            ->waitUntilNetworkIdle() // Important pour charger Tailwind CSS du CDN
+            ->pdf();
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Assets\Tables;
 
 use App\Enums\AssetStatus;
+use App\Filament\Resources\Assets\Actions\DisposeAction;
 use App\Models\Asset;
 use App\Service\AmortizationService;
 use App\Service\AssetLabelService;
@@ -78,35 +79,7 @@ class AssetsTable
                     }),
 
                 // ACTION : CESSION / SORTIE
-                Action::make('dispose')
-                    ->label('Céder')
-                    ->icon('heroicon-o-archive-box-x-mark')
-                    ->color('danger')
-                    ->visible(fn (Asset $record) => $record->status !== AssetStatus::Disposed)
-                    ->form([
-                        DatePicker::make('disposal_date')
-                            ->label('Date de Cession')
-                            ->required()
-                            ->default(now()),
-                        TextInput::make('selling_price')
-                            ->label('Prix de Vente')
-                            ->numeric()
-                            ->prefix('€')
-                            ->default(0),
-                    ])
-                    ->action(function (Asset $record, array $data, DisposalService $service) {
-                        $result = $service->processDisposal(
-                            $record,
-                            Carbon::parse($data['disposal_date']),
-                            (float) $data['selling_price'],
-                        );
-
-                        Notification::make()
-                            ->title('Actif cédé avec succès')
-                            ->body('Plus/Moins-value : '.number_format($result['gain_loss'], 2).' €')
-                            ->success()
-                            ->send();
-                    }),
+                DisposeAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
