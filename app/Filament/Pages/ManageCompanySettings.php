@@ -24,6 +24,8 @@ class ManageCompanySettings extends Page implements HasSchemas
 
     protected static ?string $navigationLabel = 'Paramètres Société';
 
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $title = 'Configuration de l\'Entreprise';
 
     protected string $view = 'filament.pages.manage-company-settings';
