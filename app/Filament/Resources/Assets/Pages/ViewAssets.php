@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Assets\Pages;
 
 use App\Enums\AssetStatus;
+use App\Filament\Resources\Assets\Actions\RevaluateAction;
 use App\Filament\Resources\Assets\AssetResource;
 use App\Filament\Widgets\AssetEvolutionChart;
 use App\Models\Asset;
@@ -11,6 +12,7 @@ use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Model;
 
 class ViewAssets extends ViewRecord
 {
@@ -23,7 +25,7 @@ class ViewAssets extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            EditAction::make()->label('Modifier'),
+            EditAction::make()->label('Modifier')->visible(fn (Model $record) => $record->status !== AssetStatus::Disposed),
             Action::make('print')
                 ->label('Imprimer')
                 ->color('warning')
@@ -50,6 +52,7 @@ class ViewAssets extends ViewRecord
                         "certificat_sortie_{$record->reference}.pdf"
                     );
                 }),
+            RevaluateAction::make()->visible(fn (Model $record) => $record->status !== AssetStatus::Disposed),
         ];
     }
 

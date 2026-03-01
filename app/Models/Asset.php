@@ -38,6 +38,7 @@ class Asset extends Model
         'depreciable_basis',
         'provider_id',
         'invoice_path',
+        'revaluation_surplus',
     ];
 
     protected function casts(): array
