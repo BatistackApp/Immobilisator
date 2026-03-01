@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Models\AmortizationLine;
+use Carbon\Carbon;
 use DB;
 use Filament\Notifications\Notification;
 
@@ -37,7 +38,7 @@ class AccountingExportService
         foreach ($lines as $line) {
             $asset = $line->asset;
             $category = $asset->category;
-            $date = now()->setYear($year)->endOfYear()->format('d/m/Y');
+            $date = Carbon::create($year, 12, 31)->format('d/m/Y');
 
             // 1. Ligne de Débit (Compte 681 - Dotations)
             fputcsv($handle, [
