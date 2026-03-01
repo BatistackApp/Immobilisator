@@ -63,7 +63,7 @@ class AmortizationService
 
             $accumulated += $annuity;
 
-            $asset->amortizationLines()->create([
+            $asset->amortizationLines()->createQuietly([
                 'year' => $currentDate->year,
                 'base_value' => $currentBaseValue,
                 'annuity_amount' => $annuity,
@@ -118,7 +118,7 @@ class AmortizationService
 
             $accumulated += $annuity;
 
-            $asset->amortizationLines()->create([
+            $asset->amortizationLines()->createQuietly([
                 'year' => $currentDate->year,
                 'base_value' => $currentBaseValue,
                 'annuity_amount' => $annuity,

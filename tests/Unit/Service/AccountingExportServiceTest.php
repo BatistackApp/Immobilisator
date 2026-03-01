@@ -3,6 +3,7 @@
 use App\Models\AmortizationLine;
 use App\Models\Asset;
 use App\Models\AssetCategory;
+use App\Models\CostCenter;
 use App\Service\AccountingExportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -133,4 +134,65 @@ it('annule la transaction (rollback) et log l\'erreur en cas d\'exception', func
         auth()->user(),
         fn ($notification) => $notification->title === 'Erreur lors de l\'exportation'
     );
+});
+
+it('inclut la 8ème colonne Analytique dans l\'export CSV', function () {
+    $service = new AccountingExportService;
+    $csv = $service->generateDotationsCsv(2025);
+
+    $header = explode(';', explode("\n", trim($csv))[0]);
+
+    // On vérifie que la 8ème colonne est bien "Analytique"
+    expect($header)->toHaveCount(8)
+        ->and($header[7])->toBe('Analytique');
+});
+
+it('exporte le code analytique correct pour un actif affecté', function () {
+    $costCenter = CostCenter::create(['code' => 'FACTORY_01', 'name' => 'Usine 1']);
+
+    $asset = Asset::factory()->create([
+        'cost_center_id' => $costCenter->id,
+        'reference' => 'MAC-001',
+    ]);
+
+    AmortizationLine::create([
+        'asset_id' => $asset->id,
+        'year' => 2025,
+        'base_value' => 1000,
+        'annuity_amount' => 200,
+        'accumulated_amount' => 200,
+        'book_value' => 800,
+        'is_posted' => false,
+    ]);
+
+    $service = new AccountingExportService;
+    $csv = $service->generateDotationsCsv(2025);
+    $rows = explode("\n", trim($csv));
+
+    // On vérifie la ligne de débit (index 1)
+    $cols = explode(';', $rows[1]);
+
+    // La 8ème colonne (index 7) doit contenir le code FACTORY_01
+    expect($cols[7])->toBe('FACTORY_01');
+});
+
+it('laisse la colonne analytique vide si aucun centre n\'est affecté', function () {
+    $asset = Asset::factory()->create(['cost_center_id' => null]);
+
+    AmortizationLine::create([
+        'asset_id' => $asset->id,
+        'year' => 2025,
+        'base_value' => 1000,
+        'annuity_amount' => 100,
+        'accumulated_amount' => 100,
+        'book_value' => 900,
+        'is_posted' => false,
+    ]);
+
+    $service = new AccountingExportService;
+    $csv = $service->generateDotationsCsv(2025);
+    $rows = explode("\n", trim($csv));
+    $cols = explode(';', $rows[1]);
+
+    expect($cols[7])->toBe('');
 });

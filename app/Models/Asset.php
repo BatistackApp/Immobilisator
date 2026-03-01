@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[ObservedBy([AssetObserver::class])]
 class Asset extends Model
 {
-    use HasFactory, SoftDeletes, LogsActivity;
+    use HasFactory, LogsActivity, SoftDeletes;
 
     protected $fillable = [
         'asset_category_id',
@@ -40,6 +40,7 @@ class Asset extends Model
         'provider_id',
         'invoice_path',
         'revaluation_surplus',
+        'cost_center_id',
     ];
 
     protected function casts(): array
@@ -87,6 +88,11 @@ class Asset extends Model
     public function amortizationLines(): HasMany
     {
         return $this->hasMany(AmortizationLine::class)->orderBy('year');
+    }
+
+    public function costCenter(): BelongsTo
+    {
+        return $this->belongsTo(CostCenter::class, 'cost_center_id');
     }
 
     public function latestAmortizationLine(): HasOne

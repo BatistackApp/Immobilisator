@@ -29,8 +29,12 @@ class AssetForm
                                         ->unique(ignoreRecord: true),
                                     Forms\Components\TextInput::make('designation')
                                         ->label('Désignation')
-                                        ->required()
-                                        ->columnSpan(2),
+                                        ->required(),
+                                    Forms\Components\Select::make('cost_center_id')
+                                        ->label('Centre de Coût (Analytique)')
+                                        ->relationship('costCenter', 'name')
+                                        ->searchable()->preload()
+                                        ->placeholder('Aucune affectation analytique'),
                                     Forms\Components\Select::make('asset_category_id')
                                         ->label('Catégorie')
                                         ->relationship('category', 'name')

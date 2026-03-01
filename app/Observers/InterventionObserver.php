@@ -35,7 +35,7 @@ class InterventionObserver
 
         // Mise à jour de la base amortissable de l'asset
         $newBasis = $asset->acquisition_value + $asset->interventions()->where('is_capitalized', true)->sum('cost');
-        $asset->update(['depreciable_basis' => $newBasis]);
+        $asset->updateQuietly(['depreciable_basis' => $newBasis]);
 
         // Déclenchement du recalcul du plan d'amortissement
         $this->service->generateSchedule($asset);
@@ -55,6 +55,6 @@ class InterventionObserver
         $metadata['last_preventive_maintenance'] = $intervention->intervention_date->toDateString();
         $metadata['next_maintenance_date'] = $nextDate->toDateString();
 
-        $asset->update(['metadata' => $metadata]);
+        $asset->updateQuietly(['metadata' => $metadata]);
     }
 }
