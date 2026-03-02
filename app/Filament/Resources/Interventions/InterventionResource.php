@@ -24,7 +24,9 @@ class InterventionResource extends Resource
     protected static ?string $model = Intervention::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog8Tooth;
-    protected static string | UnitEnum | null $navigationGroup = 'Gestion des Actifs';
+
+    protected static string|UnitEnum|null $navigationGroup = 'Gestion des Actifs';
+
     protected static ?string $navigationLabel = 'Interventions';
 
     public static function form(Schema $schema): Schema
