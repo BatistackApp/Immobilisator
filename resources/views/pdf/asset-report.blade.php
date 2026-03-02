@@ -142,6 +142,38 @@
     </table>
 </div>
 
+<!-- Tableau des Interventions -->
+@if($asset->interventions->count() !== 0)
+    <div class="mb-6">
+        <h3 class="text-gray-800 font-bold uppercase text-[10px] tracking-widest mb-3">Intervention sur l'actif</h3>
+        <table class="w-full text-[10px] border-collapse">
+            <thead>
+            <tr class="bg-gray-800 text-white uppercase">
+                <th class="p-1.5 text-left">Date</th>
+                <th class="p-1.5 text-right">Intervenant</th>
+                <th class="p-1.5 text-right">Type</th>
+                <th class="p-1.5 text-right">Désignation</th>
+                <th class="p-1.5 text-right">Montant</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+            @foreach($asset->interventions as $line)
+                <tr>
+                    <td class="p-1.5 font-bold">{{ $line->intervention_date->format("d/m/Y H:i") }}</td>
+                    <td class="p-1.5 text-right">{{ $line->provider->name }}</td>
+                    <td class="p-1.5 text-right font-bold">{{ $line->type->getLabel() }}</td>
+                    <td class="p-1.5 text-right">
+                        <span class="font-bold">{{ $line->title }}</span><br>
+                        <span class="text-gray-600">{{ $line->description }}</span>
+                    </td>
+                    <td class="p-1.5 text-right font-bold text-red-600">{{ Number::currency($line->cost, 'eur') }}</td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
+    </div>
+@endif
+
 <!-- Footer -->
 <div class="fixed bottom-8 left-10 right-10 pt-4 border-t border-gray-100 text-[8px] text-gray-400 flex justify-between items-center">
     <div>Généré par <strong>Immobilisator</strong> le {{ now()->format('d/m/Y H:i') }}</div>

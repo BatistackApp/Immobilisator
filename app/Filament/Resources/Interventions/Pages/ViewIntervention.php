@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Interventions\Pages;
 
+use App\Filament\Resources\Interventions\Actions\PrintAction;
 use App\Filament\Resources\Interventions\InterventionResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
@@ -16,6 +17,7 @@ class ViewIntervention extends ViewRecord
     {
         return [
             EditAction::make(),
+            PrintAction::make(),
         ];
     }
 }

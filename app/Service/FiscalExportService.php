@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Enums\AssetStatus;
 use App\Models\Asset;
 use App\Models\CompanySettings;
+use App\Models\Intervention;
 use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
@@ -199,5 +200,25 @@ class FiscalExportService
             ->margins(10, 10, 10, 10)
             ->waitUntilNetworkIdle() // Important pour charger Tailwind CSS du CDN
             ->pdf();
+    }
+
+    public function generateInterventionReportPdf(Intervention $intervention): string
+    {
+        $settings = CompanySettings::first() ?? new CompanySettings(['company_name' => 'Immobilisator']);
+
+        $intervention->load(['provider', 'asset']);
+
+        $html = View::make('pdf.asset-intervention', [
+            'intervention' => $intervention,
+            'settings' => $settings,
+        ])->render();
+
+        return Browsershot::html($html)
+            ->format('A4')
+            ->showBackground()
+            ->margins(10, 10, 10, 10)
+            ->waitUntilNetworkIdle() // Important pour charger Tailwind CSS du CDN
+            ->pdf();
+
     }
 }

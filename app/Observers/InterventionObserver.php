@@ -2,14 +2,28 @@
 
 namespace App\Observers;
 
+use App\Enums\AssetStatus;
 use App\Enums\InterventionType;
 use App\Models\Intervention;
 use App\Service\AmortizationService;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class InterventionObserver
 {
     public function __construct(protected AmortizationService $service) {}
+
+    public function creating(Intervention $intervention): bool
+    {
+        if ($intervention->asset->status === AssetStatus::Disposed) {
+            throw ValidationException::withMessages([
+                // Remplacez 'data.asset_id' par le nom de votre champ dans le formulaire Filament
+                'data.asset_id' => 'Il est impossible de saisir une intervention car cet objet est vendu ou mis au rebut.',
+            ]);
+        }
+
+        return true; // On autorise la création
+    }
 
     public function created(Intervention $intervention): void
     {

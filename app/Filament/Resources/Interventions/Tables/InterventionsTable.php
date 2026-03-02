@@ -3,8 +3,10 @@
 namespace App\Filament\Resources\Interventions\Tables;
 
 use App\Enums\InterventionType;
+use App\Filament\Resources\Interventions\Actions\PrintAction;
 use App\Filament\Resources\Interventions\InterventionResource;
 use App\Models\Intervention;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
@@ -61,8 +63,11 @@ class InterventionsTable
                     ->options(InterventionType::class),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    PrintAction::make(),
+                ])
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
