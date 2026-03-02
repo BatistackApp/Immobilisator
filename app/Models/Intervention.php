@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\InterventionType;
 use App\Observers\InterventionObserver;
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[ObservedBy([InterventionObserver::class])]
 class Intervention extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'asset_id',
