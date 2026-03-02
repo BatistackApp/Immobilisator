@@ -6,6 +6,7 @@ use App\Enums\InterventionType;
 use App\Enums\ProviderType;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -53,6 +54,17 @@ class InterventionForm
 
                         Textarea::make('description')
                             ->label('Description'),
+
+                        FileUpload::make('invoice_path')
+                            ->label('Justificatif')
+                            ->disk('public')
+                            ->directory('interventions/invoices')
+                            ->visibility('public')
+                            ->acceptedFileTypes(['application/pdf', 'image/*'])
+                            ->maxSize(5120) // 5Mo
+                            ->downloadable()
+                            ->openable()
+                            ->hint('Formats acceptés : PDF, JPG, PNG'),
                     ]),
 
                 Section::make('Intervention')

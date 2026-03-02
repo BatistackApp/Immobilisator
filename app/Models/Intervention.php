@@ -25,6 +25,7 @@ class Intervention extends Model
         'cost',
         'intervention_date',
         'is_capitalized',
+        'invoice_path',
     ];
 
     public function asset(): BelongsTo

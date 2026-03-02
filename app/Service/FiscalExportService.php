@@ -10,7 +10,9 @@ use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
+use setasign\Fpdi\Fpdi;
 use Spatie\Browsershot\Browsershot;
 
 /**
@@ -213,12 +215,48 @@ class FiscalExportService
             'settings' => $settings,
         ])->render();
 
-        return Browsershot::html($html)
+        $reportPdf = Browsershot::html($html)
             ->format('A4')
             ->showBackground()
             ->margins(10, 10, 10, 10)
             ->waitUntilNetworkIdle() // Important pour charger Tailwind CSS du CDN
             ->pdf();
 
+        if ($intervention->invoice_path && \Storage::disk('public')->exists($intervention->invoice_path)) {
+            if (class_exists(Fpdi::class)) {
+                try {
+                    $pdf = new Fpdi();
+
+                    $tempPath = tempnam(sys_get_temp_dir(), 'report_');
+                    file_put_contents($tempPath, $reportPdf);
+
+                    $pageCount = $pdf->setSourceFile($tempPath);
+
+                    for ($i = 1; $i <= $pageCount; $i++) {
+                        $tplIdx = $pdf->importPage($i);
+                        $size = $pdf->getTemplateSize($tplIdx);
+                        $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                        $pdf->useTemplate($tplIdx);
+                    }
+                    unlink($tempPath);
+
+                    $invoicePath = \Storage::disk('public')->path($intervention->invoice_path);
+                    $pageCount = $pdf->setSourceFile($invoicePath);
+
+                    for ($i = 1; $i <= $pageCount; $i++) {
+                        $tplIdx = $pdf->importPage($i);
+                        $size = $pdf->getTemplateSize($tplIdx);
+                        $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                        $pdf->useTemplate($tplIdx);
+                    }
+
+                    return $pdf->Output('S');
+                } catch (\Exception $e) {
+                    Log::warning('Erreur Fusion PDF: '.$e->getMessage());
+                }
+            }
+        }
+
+        return $reportPdf;
     }
 }
