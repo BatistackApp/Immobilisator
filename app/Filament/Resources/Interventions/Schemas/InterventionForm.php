@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Interventions\Schemas;
 
 use App\Enums\InterventionType;
 use App\Enums\ProviderType;
+use App\Models\Asset;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
@@ -12,6 +13,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -31,7 +33,15 @@ class InterventionForm
                                     ->relationship('asset', 'designation')
                                     ->required()
                                     ->searchable()
-                                    ->preload(),
+                                    ->preload()
+                                    ->rules([
+                                        fn (Get $get) => function (string $attribute, $value, \Closure $fail) {
+                                            $asset = Asset::find($value);
+                                            if ($asset && $asset->status === \App\Enums\AssetStatus::Disposed) {
+                                                $fail('Il est impossible de saisir une intervention car cet objet est vendu ou mis au rebut.');
+                                            }
+                                        },
+                                    ]),
 
                                 Select::make('provider_id')
                                     ->label('Intervenant')
