@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Assets\Pages;
 
 use App\Enums\AssetStatus;
+use App\Filament\Resources\Assets\Actions\DisposeAction;
 use App\Filament\Resources\Assets\Actions\RevaluateAction;
 use App\Filament\Resources\Assets\AssetResource;
 use App\Filament\Widgets\AssetEvolutionChart;
@@ -53,6 +54,9 @@ class ViewAssets extends ViewRecord
                     );
                 }),
             RevaluateAction::make()->visible(fn (Model $record) => $record->status !== AssetStatus::Disposed),
+            DisposeAction::make()
+                ->label("Vendre l'objet")
+                ->visible(fn (Asset $record) => $record->status !== AssetStatus::Disposed),
         ];
     }
 

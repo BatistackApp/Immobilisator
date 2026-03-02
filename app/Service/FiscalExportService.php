@@ -5,11 +5,14 @@ namespace App\Service;
 use App\Enums\AssetStatus;
 use App\Models\Asset;
 use App\Models\CompanySettings;
+use App\Models\Intervention;
 use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
+use setasign\Fpdi\Fpdi;
 use Spatie\Browsershot\Browsershot;
 
 /**
@@ -199,5 +202,79 @@ class FiscalExportService
             ->margins(10, 10, 10, 10)
             ->waitUntilNetworkIdle() // Important pour charger Tailwind CSS du CDN
             ->pdf();
+    }
+
+    public function generateInterventionReportPdf(Intervention $intervention): string
+    {
+        $settings = CompanySettings::first() ?? new CompanySettings(['company_name' => 'Immobilisator']);
+
+        $intervention->load(['provider', 'asset']);
+
+        // Configuration du QR Code pour un rendu propre en base64
+        $options = new QROptions([
+            'version' => QRCode::VERSION_AUTO,
+            'outputType' => QROutputInterface::GDIMAGE_PNG,
+            'eccLevel' => QRCode::ECC_L,
+            'scale' => 5,
+            'imageBase64' => true,
+            'bgColor' => [255, 255, 255],
+            'imageTransparent' => false,
+            'drawCircularModules' => false,
+        ]);
+
+        $qrcode = new QRCode($options);
+
+        $url = config('app.url')."/admin/interventions/{$intervention->id}";
+        $qrCodeUri = $qrcode->render($url);
+
+        $html = View::make('pdf.asset-intervention', [
+            'intervention' => $intervention,
+            'settings' => $settings,
+            'qr_code_uri' => $qrCodeUri,
+        ])->render();
+
+        $reportPdf = Browsershot::html($html)
+            ->format('A4')
+            ->showBackground()
+            ->margins(10, 10, 10, 10)
+            ->waitUntilNetworkIdle() // Important pour charger Tailwind CSS du CDN
+            ->pdf();
+
+        if ($intervention->invoice_path && \Storage::disk('public')->exists($intervention->invoice_path)) {
+            if (class_exists(Fpdi::class)) {
+                try {
+                    $pdf = new Fpdi;
+
+                    $tempPath = tempnam(sys_get_temp_dir(), 'report_');
+                    file_put_contents($tempPath, $reportPdf);
+
+                    $pageCount = $pdf->setSourceFile($tempPath);
+
+                    for ($i = 1; $i <= $pageCount; $i++) {
+                        $tplIdx = $pdf->importPage($i);
+                        $size = $pdf->getTemplateSize($tplIdx);
+                        $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                        $pdf->useTemplate($tplIdx);
+                    }
+                    unlink($tempPath);
+
+                    $invoicePath = \Storage::disk('public')->path($intervention->invoice_path);
+                    $pageCount = $pdf->setSourceFile($invoicePath);
+
+                    for ($i = 1; $i <= $pageCount; $i++) {
+                        $tplIdx = $pdf->importPage($i);
+                        $size = $pdf->getTemplateSize($tplIdx);
+                        $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                        $pdf->useTemplate($tplIdx);
+                    }
+
+                    return $pdf->Output('S');
+                } catch (\Exception $e) {
+                    Log::warning('Erreur Fusion PDF: '.$e->getMessage());
+                }
+            }
+        }
+
+        return $reportPdf;
     }
 }

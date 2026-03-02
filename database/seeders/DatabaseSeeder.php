@@ -30,7 +30,5 @@ class DatabaseSeeder extends Seeder
             '--email' => 'admin@admin.com',
             '--password' => 'admin',
         ]);
-
-        $company->update(['seeded' => true]);
     }
 }

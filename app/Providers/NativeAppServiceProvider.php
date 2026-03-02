@@ -19,7 +19,7 @@ class NativeAppServiceProvider implements ProvidesPhpIni
             ->width(1920)
             ->height(1080);
 
-        if (CompanySettings::where('seeded', true)->count() === 0) {
+        if (! CompanySettings::first()) {
             Artisan::call('db:seed');
         }
     }

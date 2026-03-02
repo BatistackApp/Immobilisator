@@ -22,7 +22,7 @@ class AssetStatsOverview extends StatsOverviewWidget
             // Optimisation : Utiliser une jointure latérale ou une fenêtre si la DB le permet (Postgres/MySQL 8)
             // Sinon, s'assurer que l'amortissement est calculé correctement.
             ->where('assets.status', '!=', AssetStatus::Disposed->value)
-            ->whereRaw('amortization_lines.date = (SELECT MAX(date) FROM amortization_lines WHERE asset_id = assets.id)')
+            ->whereRaw('amortization_lines.year = (SELECT MAX(year) FROM amortization_lines WHERE asset_id = assets.id)')
             ->sum('amortization_lines.book_value');
 
         // Harmonisation à 30 jours pour la cohérence avec le tableau

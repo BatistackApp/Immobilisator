@@ -2,10 +2,12 @@
 
 namespace App\Observers;
 
+use App\Enums\AssetStatus;
 use App\Enums\InterventionType;
 use App\Models\Intervention;
 use App\Service\AmortizationService;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class InterventionObserver
 {

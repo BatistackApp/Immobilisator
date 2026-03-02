@@ -2,8 +2,10 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\Assets\AssetResource;
 use App\Models\Asset;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
@@ -29,6 +31,11 @@ class LatestAssetsTable extends TableWidget
                 TextColumn::make('category.name')->label('Catégorie'),
                 TextColumn::make('acquisition_value')->label('Valeur HT')->money('EUR'),
                 TextColumn::make('status')->label('Statut')->badge(),
+            ])
+            ->recordActions([
+                ViewAction::make('view')
+                    ->iconButton()
+                    ->url(fn (Asset $record): string => AssetResource::getUrl('view', ['record' => $record])),
             ]);
     }
 }
