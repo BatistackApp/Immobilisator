@@ -210,9 +210,27 @@ class FiscalExportService
 
         $intervention->load(['provider', 'asset']);
 
+        // Configuration du QR Code pour un rendu propre en base64
+        $options = new QROptions([
+            'version' => QRCode::VERSION_AUTO,
+            'outputType' => QROutputInterface::GDIMAGE_PNG,
+            'eccLevel' => QRCode::ECC_L,
+            'scale' => 5,
+            'imageBase64' => true,
+            'bgColor' => [255, 255, 255],
+            'imageTransparent' => false,
+            'drawCircularModules' => false,
+        ]);
+
+        $qrcode = new QRCode($options);
+
+        $url = config('app.url')."/admin/interventions/{$intervention->id}";
+        $qrCodeUri = $qrcode->render($url);
+
         $html = View::make('pdf.asset-intervention', [
             'intervention' => $intervention,
             'settings' => $settings,
+            'qr_code_uri' => $qrCodeUri,
         ])->render();
 
         $reportPdf = Browsershot::html($html)
@@ -225,7 +243,7 @@ class FiscalExportService
         if ($intervention->invoice_path && \Storage::disk('public')->exists($intervention->invoice_path)) {
             if (class_exists(Fpdi::class)) {
                 try {
-                    $pdf = new Fpdi();
+                    $pdf = new Fpdi;
 
                     $tempPath = tempnam(sys_get_temp_dir(), 'report_');
                     file_put_contents($tempPath, $reportPdf);
