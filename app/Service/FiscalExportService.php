@@ -110,6 +110,8 @@ class FiscalExportService
             ->format('A4')
             ->landscape()
             ->showBackground()
+            ->noSandbox()
+            ->setOption('args', ['--disable-web-security'])
             ->margins(0, 0, 0, 0)
             ->waitUntilNetworkIdle() // Attend que le CDN Tailwind soit chargé
             ->pdf();
@@ -133,6 +135,8 @@ class FiscalExportService
             ->format('A4')
             ->landscape()
             ->showBackground()
+            ->noSandbox()
+            ->setOption('args', ['--disable-web-security'])
             ->margins(0, 0, 0, 0)
             ->waitUntilNetworkIdle()
             ->pdf();
@@ -175,6 +179,8 @@ class FiscalExportService
         return Browsershot::html($html)
             ->format('A4')
             ->showBackground()
+            ->noSandbox()
+            ->setOption('args', ['--disable-web-security'])
             ->margins(10, 10, 10, 10)
             ->waitUntilNetworkIdle()
             ->pdf();
@@ -199,6 +205,8 @@ class FiscalExportService
         return Browsershot::html($html)
             ->format('A4')
             ->showBackground()
+            ->noSandbox()
+            ->setOption('args', ['--disable-web-security'])
             ->margins(10, 10, 10, 10)
             ->waitUntilNetworkIdle() // Important pour charger Tailwind CSS du CDN
             ->pdf();
@@ -236,6 +244,8 @@ class FiscalExportService
         $reportPdf = Browsershot::html($html)
             ->format('A4')
             ->showBackground()
+            ->noSandbox()
+            ->setOption('args', ['--disable-web-security'])
             ->margins(10, 10, 10, 10)
             ->waitUntilNetworkIdle() // Important pour charger Tailwind CSS du CDN
             ->pdf();

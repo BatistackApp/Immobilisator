@@ -54,6 +54,8 @@ class AssetLabelService
         return Browsershot::html($html)
             ->format('A4')
             ->showBackground()
+            ->noSandbox()
+            ->setOption('args', ['--disable-web-security'])
             ->margins(0, 0, 0, 0)
             ->waitUntilNetworkIdle()
             ->pdf();
