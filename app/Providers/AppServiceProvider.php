@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Opcodes\LogViewer\Facades\LogViewer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -41,6 +42,13 @@ class AppServiceProvider extends ServiceProvider
 
             // Nettoyage automatique des modèles "soft deleted" depuis plus de 30 jours
             $schedule->command('model:prune')->daily();
+        });
+
+        LogViewer::auth(function ($request) {
+            return $request->user()
+                && in_array($request->user()->email, [
+                    'admin@admin.com',
+                ]);
         });
     }
 
