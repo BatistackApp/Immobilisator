@@ -52,6 +52,8 @@ class AssetLabelService
 
         // Rendu PDF via Browsershot
         return Browsershot::html($html)
+            ->setNodeBinary(config('browsershot.node_binary_path'))
+            ->setNpmBinary(config('browsershot.npm_binary_path'))
             ->format('A4')
             ->showBackground()
             ->noSandbox()

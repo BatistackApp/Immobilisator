@@ -107,6 +107,8 @@ class FiscalExportService
 
         // On utilise Browsershot pour convertir le HTML en PDF
         return Browsershot::html($html)
+            ->setNodeBinary(config('browsershot.node_binary_path'))
+            ->setNpmBinary(config('browsershot.npm_binary_path'))
             ->format('A4')
             ->landscape()
             ->showBackground()
@@ -132,6 +134,8 @@ class FiscalExportService
         ])->render();
 
         return Browsershot::html($html)
+            ->setNodeBinary(config('browsershot.node_binary_path'))
+            ->setNpmBinary(config('browsershot.npm_binary_path'))
             ->format('A4')
             ->landscape()
             ->showBackground()
@@ -177,6 +181,8 @@ class FiscalExportService
         ])->render();
 
         return Browsershot::html($html)
+            ->setNodeBinary(config('browsershot.node_binary_path'))
+            ->setNpmBinary(config('browsershot.npm_binary_path'))
             ->format('A4')
             ->showBackground()
             ->noSandbox()
@@ -203,6 +209,8 @@ class FiscalExportService
         ])->render();
 
         return Browsershot::html($html)
+            ->setNodeBinary(config('browsershot.node_binary_path'))
+            ->setNpmBinary(config('browsershot.npm_binary_path'))
             ->format('A4')
             ->showBackground()
             ->noSandbox()
@@ -242,6 +250,8 @@ class FiscalExportService
         ])->render();
 
         $reportPdf = Browsershot::html($html)
+            ->setNodeBinary(config('browsershot.node_binary_path'))
+            ->setNpmBinary(config('browsershot.npm_binary_path'))
             ->format('A4')
             ->showBackground()
             ->noSandbox()
