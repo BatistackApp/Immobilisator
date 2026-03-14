@@ -30,6 +30,15 @@ class MaintenanceDueNotification extends Notification implements ShouldQueue
             ->line('Le respect des cycles de maintenance garantit la longévité de vos actifs.');
     }
 
+    public function toDatabase($notifiable): array
+    {
+        return \Filament\Notifications\Notification::make()
+            ->warning()
+            ->title("Alerte Maintenance Préventive : {$this->asset->reference}")
+            ->body("Une maintenance préventive est à prévoir pour l'immobilisation : {$this->asset->designation}.<br>Date d'échéance prévue : ".\Carbon\Carbon::parse($this->dueDate)->format('d/m/Y'))
+            ->getDatabaseMessage();
+    }
+
     public function toArray($notifiable): array
     {
         return [

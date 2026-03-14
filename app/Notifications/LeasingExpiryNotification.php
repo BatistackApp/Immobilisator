@@ -32,6 +32,15 @@ class LeasingExpiryNotification extends Notification implements ShouldQueue
             ->line("Pensez à lever l'option d'achat ou à restituer le bien avant la date limite.");
     }
 
+    public function toDatabase($notifiable): array
+    {
+        return \Filament\Notifications\Notification::make()
+            ->warning()
+            ->title("Échéance de contrat de crédit-bail : {$this->leasing->contract_number}")
+            ->body("Le contrat de crédit-bail n°{$this->leasing->contract_number} arrive à échéance prochainement.")
+            ->getDatabaseMessage();
+    }
+
     public function toArray($notifiable): array
     {
         return [
