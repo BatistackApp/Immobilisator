@@ -28,6 +28,15 @@ class AssetDepreciatedNotification extends Notification implements ShouldQueue
             ->line('Pensez à traiter sa sortie si le bien n\'est plus utilisé.');
     }
 
+    public function toDatabase($notifiable): array
+    {
+        return \Filament\Notifications\Notification::make()
+            ->success()
+            ->title('Amortissement Terminer')
+            ->body('L\'amortissement pour l\'immobilisation <strong>'.$this->asset->designation.'</strong> est maintenant terminer')
+            ->getDatabaseMessage();
+    }
+
     public function toArray($notifiable): array
     {
         return [
